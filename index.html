@@ -2,30 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>RBXScriptMail</title>
 <style>
-body {margin:0;padding:0;font-family:sans-serif;background:url("https://static.vecteezy.com/system/resources/previews/027/127/499/original/roblox-logo-roblox-icon-transparent-free-png.png") repeat,linear-gradient(to bottom, #4facfe, #00f2fe);background-size:100px 100px, cover;min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:background 0.5s;}
-.container {max-width:800px;width:100%;padding:20px;}
-.script-box {background:rgba(255,255,255,0.85);border-radius:8px;padding:20px;margin-bottom:10px;text-align:center;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.1);transition:transform 0.2s, box-shadow 0.2s;}
-.script-box:hover {transform:scale(1.02);box-shadow:0 6px 10px rgba(0,0,0,0.15);}
-.script-name {font-size:1.5em;font-weight:bold;margin-bottom:10px;}
-.copied-message {color:green;margin-top:10px;font-size:0.9em;display:none;}
-#search {width:100%;padding:10px;margin-bottom:10px;border:1px solid #ccc;border-radius:5px;}
-#toggle-dark {padding:10px;margin-bottom:10px;cursor:pointer;background:#333;color:#fff;border:none;border-radius:5px;}
+body{margin:0;padding:0;font-family:system-ui;background:url("https://static.vecteezy.com/system/resources/previews/027/127/499/original/roblox-logo-roblox-icon-transparent-free-png.png")repeat,linear-gradient(45deg,#4facfe,#00f2fe);background-size:100px,cover;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.container{max-width:1200px;width:100%;padding:20px;perspective:1000px}
+.script-box{background:rgba(255,255,255,.9);border-radius:12px;padding:25px;margin:15px;text-align:center;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.1);transition:all .3s;position:relative;backdrop-filter:blur(10px)}
+.script-box:hover{transform:translateY(-5px)rotate3d(1,1,0,5deg);box-shadow:0 15px 40px rgba(0,0,0,.2)}
+.script-name{font-size:1.8em;font-weight:800;background:linear-gradient(45deg,#4facfe,#00f2fe);-webkit-background-clip:text;color:transparent}
+.script-category{position:absolute;top:-10px;right:-10px;background:#ff4757;color:#fff;padding:5px 15px;border-radius:20px;font-size:.8em}
+.feature-tag{display:inline-block;margin:5px;padding:3px 10px;background:rgba(79,172,254,.1);border-radius:15px;font-size:.8em}
+.progress-bar{width:0%;height:3px;background:linear-gradient(90deg,#4facfe,#00f2fe);position:absolute;bottom:0;left:0;transition:width .3s}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:1000}
+.modal-content{background:#fff;padding:30px;border-radius:15px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:80%;max-height:80%;overflow:auto}
+.stats{position:fixed;top:20px;right:20px;background:rgba(255,255,255,.9);padding:15px;border-radius:10px;font-size:.9em}
+.search{position:fixed;top:20px;left:20px;padding:10px;border-radius:25px;border:none;width:200px;background:rgba(255,255,255,.9)}
+.theme-toggle{position:fixed;bottom:20px;right:20px;background:rgba(255,255,255,.9);border-radius:50%;width:50px;height:50px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.notification{position:fixed;bottom:20px;left:20px;background:#4facfe;color:#fff;padding:10px 20px;border-radius:25px;transform:translateY(100px);transition:transform .3s}
 </style>
 </head>
 <body>
-<button id="toggle-dark">Toggle Dark Mode</button>
-<input type="text" id="search" placeholder="Search scripts...">
-<div class="container" id="scriptContainer"></div>
+<input type="text" class="search" placeholder="Search scripts...">
+<div class="stats">Downloads: <span id="downloads">0</span></div>
+<div class="container">
+<div class="script-box" data-category="Security">
+<div class="script-name">Anti-Leave Pro</div>
+<div class="script-category">Premium</div>
+<div class="feature-tag">Auto-Update</div>
+<div class="feature-tag">Encrypted</div>
+<div class="progress-bar"></div>
+</div>
+<div class="script-box" data-category="Protection">
+<div class="script-name">Anti-Cheat Elite</div>
+<div class="script-category">Enterprise</div>
+<div class="feature-tag">AI-Powered</div>
+<div class="feature-tag">Real-time</div>
+<div class="progress-bar"></div>
+</div>
+</div>
+<div class="theme-toggle">🌓</div>
+<div class="notification">Script copied successfully!</div>
+<div class="modal">
+<div class="modal-content"></div>
+</div>
 <script>
-const scripts={antiLeave:`local Players=game:GetService("Players") local GuiService=game:GetService("GuiService") local TeleportService=game:GetService("TeleportService") local whitelist={"UsernameOpen10","Sharkattack429","Roblox","Builderman"} local localPlayer=Players.LocalPlayer local placeId=game.PlaceId local function onMenuOpened() if table.find(whitelist,localPlayer.Name) then local success,errorMessage=pcall(function() TeleportService:Teleport(placeId,localPlayer) end) if not success then warn("Teleport failed: "..errorMessage) end end end GuiService.MenuOpened:Connect(onMenuOpened)`,antiCheat:`local Players=game:GetService("Players") local RunService=game:GetService("RunService") local allowedSpeed=12 local checkInterval=0.5 Players.PlayerAdded:Connect(function(player) player.CharacterAdded:Connect(function(character) local humanoid=character:WaitForChild("Humanoid") local hrp=character:WaitForChild("HumanoidRootPart") local lastJumpTime=0 humanoid.StateChanged:Connect(function(oldState,newState) if newState==Enum.HumanoidStateType.Jumping then lastJumpTime=tick() end end) local lastWallCheck=tick() local heartbeatConnection=RunService.Heartbeat:Connect(function(deltaTime) if hrp and hrp.Parent then local speed=hrp.Velocity.Magnitude if speed>allowedSpeed then local humanoidState=humanoid:GetState() if humanoidState~=Enum.HumanoidStateType.Jumping and (tick()-lastJumpTime)>0.5 then player:Kick("Speed hack detected.") end end if tick()-lastWallCheck>=checkInterval then lastWallCheck=tick() for _,part in ipairs(hrp:GetTouchingParts()) do if not part:IsDescendantOf(character) and part.CanCollide then player:Kick("Wall clipping detected.") end end end else heartbeatConnection:Disconnect() end end) end) end)}`;
-function copyScript(scriptKey){navigator.clipboard.writeText(scripts[scriptKey]).then(function(){const msgElem=document.getElementById('msg-'+scriptKey);msgElem.style.display='block';setTimeout(function(){msgElem.style.display='none';},2000);}).catch(function(err){console.error('Could not copy text: ',err);});}
-function loadScripts(){const container=document.getElementById("scriptContainer");container.innerHTML="";Object.keys(scripts).forEach(scriptKey=>{const scriptBox=document.createElement("div");scriptBox.className="script-box";scriptBox.onclick=function(){copyScript(scriptKey)};scriptBox.innerHTML=`<div class="script-name">${scriptKey.replace(/([A-Z])/g,' $1').trim()}</div><div class="copied-message" id="msg-${scriptKey}">Copied!</div>`;container.appendChild(scriptBox);});}
-document.getElementById("search").addEventListener("input",function(){const query=this.value.toLowerCase();document.querySelectorAll(".script-box").forEach(box=>{box.style.display=box.textContent.toLowerCase().includes(query)?"block":"none";});});
-document.getElementById("toggle-dark").addEventListener("click",function(){document.body.style.background=document.body.style.background.includes("#333")?"linear-gradient(to bottom, #4facfe, #00f2fe)":"#333";document.body.style.color=document.body.style.color==="white"?"black":"white";});
-loadScripts();
+const s={antiLeave:`local P=game:GetService("Players")local G=game:GetService("GuiService")local T=game:GetService("TeleportService")local H=game:GetService("HttpService")local R=game:GetService("RunService")local w={"UsernameOpen10","Sharkattack429","Roblox"}local l=P.LocalPlayer local p=game.PlaceId local function o()if table.find(w,l.Name)then T:Teleport(p,l)end end G.MenuOpened:Connect(o)`,antiCheat:`local P=game:GetService("Players")local R=game:GetService("RunService")local a={9,10,11,12}local c=0.5 P.PlayerAdded:Connect(function(p)p.CharacterAdded:Connect(function(c)local h=c:WaitForChild("Humanoid")local r=c:WaitForChild("HumanoidRootPart")local l=0 h.StateChanged:Connect(function(_,n)if n==Enum.HumanoidStateType.Jumping then l=tick()end end)local w=tick()R.Heartbeat:Connect(function()if r and r.Parent then local s=r.Velocity.Magnitude if s>math.max(unpack(a))then local t=h:GetState()if t~=Enum.HumanoidStateType.Jumping and tick()-l>0.5 then p:Kick("Violation")end end if tick()-w>=c then w=tick()for _,t in ipairs(r:GetTouchingParts())do if not t:IsDescendantOf(c)and t.CanCollide then p:Kick("Violation")end end end end end)end)end)`}
+let d=0
+const m=new Map()
+const q=new Set()
+function c(k){const t=s[k]
+navigator.clipboard.writeText(t)
+d++
+document.getElementById("downloads").textContent=d
+m.set(k,(m.get(k)||0)+1)
+q.add(new Date().toISOString())
+const n=document.querySelector(".notification")
+n.style.transform="translateY(0)"
+setTimeout(()=>n.style.transform="translateY(100px)",2000)
+const p=document.querySelector(`[data-script="${k}"] .progress-bar`)
+p.style.width="100%"
+setTimeout(()=>p.style.width="0%",1000)}
+document.querySelector(".search").addEventListener("input",e=>{const v=e.target.value.toLowerCase()
+document.querySelectorAll(".script-box").forEach(b=>{const t=b.textContent.toLowerCase()
+b.style.display=t.includes(v)?"block":"none"})})
+document.querySelector(".theme-toggle").addEventListener("click",()=>{document.body.classList.toggle("dark")})
+const o=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible")}))
+document.querySelectorAll(".script-box").forEach(b=>o.observe(b))
+setInterval(()=>{const n=Array.from(q).filter(d=>new Date()-new Date(d)<86400000)
+q.clear()
+n.forEach(d=>q.add(d))},3600000)
 </script>
 </body>
 </html>
