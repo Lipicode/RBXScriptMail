@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RBXScriptMail</title>
+<style>
+body {margin:0;padding:0;font-family:sans-serif;background:url("https://static.vecteezy.com/system/resources/previews/027/127/499/original/roblox-logo-roblox-icon-transparent-free-png.png") repeat,linear-gradient(to bottom, #4facfe, #00f2fe);background-size:100px 100px, cover;min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:background 0.5s;}
+.container {max-width:800px;width:100%;padding:20px;}
+.script-box {background:rgba(255,255,255,0.85);border-radius:8px;padding:20px;margin-bottom:10px;text-align:center;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.1);transition:transform 0.2s, box-shadow 0.2s;}
+.script-box:hover {transform:scale(1.02);box-shadow:0 6px 10px rgba(0,0,0,0.15);}
+.script-name {font-size:1.5em;font-weight:bold;margin-bottom:10px;}
+.copied-message {color:green;margin-top:10px;font-size:0.9em;display:none;}
+#search {width:100%;padding:10px;margin-bottom:10px;border:1px solid #ccc;border-radius:5px;}
+#toggle-dark {padding:10px;margin-bottom:10px;cursor:pointer;background:#333;color:#fff;border:none;border-radius:5px;}
+</style>
+</head>
+<body>
+<button id="toggle-dark">Toggle Dark Mode</button>
+<input type="text" id="search" placeholder="Search scripts...">
+<div class="container" id="scriptContainer"></div>
+<script>
+const scripts={antiLeave:`local Players=game:GetService("Players") local GuiService=game:GetService("GuiService") local TeleportService=game:GetService("TeleportService") local whitelist={"UsernameOpen10","Sharkattack429","Roblox","Builderman"} local localPlayer=Players.LocalPlayer local placeId=game.PlaceId local function onMenuOpened() if table.find(whitelist,localPlayer.Name) then local success,errorMessage=pcall(function() TeleportService:Teleport(placeId,localPlayer) end) if not success then warn("Teleport failed: "..errorMessage) end end end GuiService.MenuOpened:Connect(onMenuOpened)`,antiCheat:`local Players=game:GetService("Players") local RunService=game:GetService("RunService") local allowedSpeed=12 local checkInterval=0.5 Players.PlayerAdded:Connect(function(player) player.CharacterAdded:Connect(function(character) local humanoid=character:WaitForChild("Humanoid") local hrp=character:WaitForChild("HumanoidRootPart") local lastJumpTime=0 humanoid.StateChanged:Connect(function(oldState,newState) if newState==Enum.HumanoidStateType.Jumping then lastJumpTime=tick() end end) local lastWallCheck=tick() local heartbeatConnection=RunService.Heartbeat:Connect(function(deltaTime) if hrp and hrp.Parent then local speed=hrp.Velocity.Magnitude if speed>allowedSpeed then local humanoidState=humanoid:GetState() if humanoidState~=Enum.HumanoidStateType.Jumping and (tick()-lastJumpTime)>0.5 then player:Kick("Speed hack detected.") end end if tick()-lastWallCheck>=checkInterval then lastWallCheck=tick() for _,part in ipairs(hrp:GetTouchingParts()) do if not part:IsDescendantOf(character) and part.CanCollide then player:Kick("Wall clipping detected.") end end end else heartbeatConnection:Disconnect() end end) end) end)}`;
+function copyScript(scriptKey){navigator.clipboard.writeText(scripts[scriptKey]).then(function(){const msgElem=document.getElementById('msg-'+scriptKey);msgElem.style.display='block';setTimeout(function(){msgElem.style.display='none';},2000);}).catch(function(err){console.error('Could not copy text: ',err);});}
+function loadScripts(){const container=document.getElementById("scriptContainer");container.innerHTML="";Object.keys(scripts).forEach(scriptKey=>{const scriptBox=document.createElement("div");scriptBox.className="script-box";scriptBox.onclick=function(){copyScript(scriptKey)};scriptBox.innerHTML=`<div class="script-name">${scriptKey.replace(/([A-Z])/g,' $1').trim()}</div><div class="copied-message" id="msg-${scriptKey}">Copied!</div>`;container.appendChild(scriptBox);});}
+document.getElementById("search").addEventListener("input",function(){const query=this.value.toLowerCase();document.querySelectorAll(".script-box").forEach(box=>{box.style.display=box.textContent.toLowerCase().includes(query)?"block":"none";});});
+document.getElementById("toggle-dark").addEventListener("click",function(){document.body.style.background=document.body.style.background.includes("#333")?"linear-gradient(to bottom, #4facfe, #00f2fe)":"#333";document.body.style.color=document.body.style.color==="white"?"black":"white";});
+loadScripts();
+</script>
+</body>
+</html>
